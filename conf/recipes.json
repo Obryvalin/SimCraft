@@ -1,0 +1,17 @@
+{
+  "recipes": [
+    {
+      "recipeName": "hamburger",
+      "components": ["ham", "bread"],
+      "skill": "packing"
+    },
+    {
+        "recipeName":"ham",
+        "skill":"grill"        
+    },
+    {
+        "recipeName":"bread",
+        "skill":"slicing"
+    }
+  ]
+}
