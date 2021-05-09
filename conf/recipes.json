@@ -6,12 +6,12 @@
       "skill": "packing"
     },
     {
-        "recipeName":"ham",
-        "skill":"grill"        
+      "recipeName": "ham",
+      "skill": "grill"
     },
     {
-        "recipeName":"bread",
-        "skill":"slicing"
+      "recipeName": "bread",
+      "skill": "slicing"
     }
   ]
 }

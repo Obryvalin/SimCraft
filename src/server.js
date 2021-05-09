@@ -1,49 +1,30 @@
-const {Pool} = require("pg");
+const pgsql = require("./pgsql");
 const fs = require("fs");
-
-const pgoptions = JSON.parse(fs.readFileSync("conf/pg.json").toString());
 const {recipes} = JSON.parse(fs.readFileSync("conf/recipes.json").toString());
 
-pool = new Pool(pgoptions);
-
-const query = (sql,callback)=>{
-    pool.query(sql,(err,res)=>{
-        if (err){
-            console.log("PG error: "+ sql);
-            console.log(err);
-            if (callback){callback(err,undefined)}
-
-        }
-        if (!err)
-        {
-            if(callback){callback(undefined,res)}
-
-        }
-    });
-
-};
 
 const subRequest = (source,id,product,callback) =>{
     
 
     if (!source || !id || !product) {
-        callback('Not enogh parameters',undefined);
+        if (callback)  callback('Not enogh parameters',undefined);
     }
     let recipe;
     let hasRecipe = false;
     recipes.forEach((arecipe)=>{
-        if (arecipe.recipeName == product)
+        if (arecipe.recipeName == product){
         hasRecipe = true;
-        recipe = arecipe;
+        recipe = arecipe.recipeName;
+        }
     })
      if (hasRecipe == false){
-        callback('No suitable recipe',undefined);
+        if (callback) callback('No suitable recipe',undefined);
      }
      let components = [];
      components =  deRecipe(recipe);
-
+     console.log(components);
      components.forEach((component)=>{
-         query("insert into sublog(source,id,product,snd) values('"+source+"','"+id+"','"+component+"',CURRENT_TIMESTAMP)");
+         pgsql.query("insert into sublog(source,id,product,snd) values('"+source+"','"+id+"','"+component+"',CURRENT_TIMESTAMP)");
      })
     
     
@@ -51,25 +32,35 @@ const subRequest = (source,id,product,callback) =>{
 
 const deRecipe = (recipe) =>{
     let returnArray = [];
-    if (recipe.components){
-        recipe.components.forEach((component)=>{
-            returnArray.concat(deRecipe(component));
-        })
+    
+    let hasRecipe = false;
+    recipes.forEach((recipeItem)=>{
+        if (recipeItem.recipeName == recipe){
+        hasRecipe = true;
+        if (recipeItem.components){
+            recipeItem.components.forEach((component)=>{
+                returnArray = returnArray.concat(deRecipe(component));
+            })
+        }
     }
-    returnArray.push(recipe.recipeName);
+    })
+
+    console.log ("deRecipe + ",recipe);
+    returnArray.push(recipe);
     return returnArray;
 
-    }
+}
 
 
 const newRequest = (source,id,product,callback) =>{
     if (!source || !id || !product) {
-        callback('Not enogh parameters',undefined);
+        if (callback) callback('Not enogh parameters',undefined);
     }
     else{
-        query("INSERT INTO reqdata(source,id,product) values ('"+source+"',"+id+"','"+procuct+"')",()=>{
-            query("INSERT INTO log(source,id,snd) values ('"+source+"','"+id+"',CURRENT_TIMESTAMP)",()=>{
-            callback(undefined,undefined);
+        pgsql.query("INSERT INTO reqdata(source,id,product) values ('"+source+"','"+id+"','"+product+"')",()=>{
+            pgsql.query("INSERT INTO log(source,id,snd) values ('"+source+"','"+id+"',CURRENT_TIMESTAMP)",()=>{
+                subRequest(source,id,product);
+                if (callback) callback(undefined,undefined);
             });      
         });
         
@@ -77,19 +68,10 @@ const newRequest = (source,id,product,callback) =>{
 }
 
 
-const inventoryPut = (product) =>{
-    query("insert into inventory(product) values('"+product+"')");
-}
-
-const inventoryTake = (product) =>{
-    query("delete from inventory where product = '"+product+"' limit 1")
-}
-
 const canFinishRequest = (source,id) =>{
 
 }
 
 module.exports = {
-    dbInit,
     newRequest
 } 

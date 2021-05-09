@@ -1,21 +1,35 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const PORT = 80;
-let port;
-let webServer = express_1.default();
+const express = require("express");
+const server = require( "./server");
+
+const PORT = 3000;
+let webServer = express();
 //===================================================
-webServer.get('/express', (request, response) => {
-    console.log("Request from IP:" + request.ip);
-    response.send(request.query);
+
+webServer.get('/Request',(request,response)=>{
+    console.log("Request from IP:"+request.ip);
+    console.log(request.query);
+    if (!request.query.product){
+        console.log("No Product!");
+        response.send({result:"Fail",error:"No Product"});
+    }
+    else
+    {
+        server.newRequest("Web",request.query.id,request.query.product,()=>{
+            response.send({result:"Registred"}); 
+        })
+    }
+    
 });
+
+webServer.get('*',(request,response)=>{
+    response.send('404');
+})
+
 //===================================================
 const launch = (port) => {
-    webServer.listen(port, () => {
-        console.log("Express fired on port " + port);
-    });
-};
+    webServer.listen(port, ()=>{
+
+    console.log("Express fired on port "+port);
+    })
+}
 launch(PORT);
