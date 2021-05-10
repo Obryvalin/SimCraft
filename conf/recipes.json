@@ -12,6 +12,17 @@
     {
       "recipeName": "bread",
       "skill": "slicing"
+    },
+    {
+      "recipeName":"BigTasty",
+      "components":["hamburger","salad"],
+      "skill":"packing"
+    },
+    {
+      "recipeName":"salad",
+      "components":["tomato","cocumber"],
+      "skill":"slicing"
     }
+    
   ]
 }

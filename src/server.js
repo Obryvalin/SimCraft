@@ -24,7 +24,7 @@ const subRequest = (source,id,product,callback) =>{
      components =  deRecipe(recipe);
      console.log(components);
      components.forEach((component)=>{
-         pgsql.query("insert into sublog(source,id,product,snd) values('"+source+"','"+id+"','"+component+"',CURRENT_TIMESTAMP)");
+         pgsql.query("insert into sublog(source,id,product) values('"+source+"','"+id+"','"+component+"')");
      })
     
     
