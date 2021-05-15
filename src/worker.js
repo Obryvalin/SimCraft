@@ -7,7 +7,7 @@ const {recipes} = JSON.parse(fs.readFileSync("conf/recipes.json").toString());
 var grabCount = 2;
 var WORKERNAME = "WORKER1";
 var INTERVAL = 3000;
-
+var COOLDOWN = 20;
 var skills = [];
 
 const initWorker = ()=>{
@@ -21,21 +21,24 @@ const finishWorker = ()=>{
     console.log ("Finish Worker");
     pgsql.query("delete from workers where worker='"+WORKERNAME+"'")
 }
-
+// id у всех одинаковые
 const markRequest = (callback)=>{
-    pgsql.query("UPDATE sublog set worker = '"+WORKERNAME+"', snd = CURRENT_TIMESTAMP where id in (SELECT id from sublog where (worker is null or worker = '"+WORKERNAME+"') and rep is null order by id limit "+grabCount+" )",()=>{
+    pgsql.query("UPDATE sublog set worker = '"+WORKERNAME+"' where product in (SELECT product from sublog where (worker is null or worker = '"+WORKERNAME+"') and rep is null order by id limit "+grabCount+" )",()=>{
         if(callback) callback();
     })
 }
 const getRequests = (callback)=>{
-    pgsql.query("select * from sublog where worker='"+WORKERNAME+"' and rep is null",(err,res)=>{
-        if(!res){
-            console.log("No Requests");
-            if(callback) callback(undefined);
-        }
-        
-        if(callback) callback(res.rows);
-    })
+    pgsql.query("update sublog set snd = CURRENT_TIMESTAMP where snd is null or EXTRACT(EPOCH FROM current_timestamp-snd) > "+COOLDOWN,()=>{
+        pgsql.query("select * from sublog where worker='"+WORKERNAME+"' and rep is null ",(err,res)=>{
+            if(!res){
+                console.log("No Requests");
+                if(callback) callback(undefined);
+            }
+            
+            if(callback) callback(res.rows);
+        })
+    });
+    
 }
 const workRequest = (request,callback)=>{
     let skillNeeded;
@@ -53,7 +56,7 @@ const workRequest = (request,callback)=>{
                 skill:skillNeeded,
                 skillValue:0
             }
-            skills.add(newSkill);
+            skills.push(newSkill);
             currentSkill = newSkill;
         }
         else{
@@ -61,13 +64,18 @@ const workRequest = (request,callback)=>{
             skills[hasSkill].skillValue++;
         }
     }
+    
+    console.log(request);
+    console.log('WorkRequest: '+Math.min(20-currentSkill.skillValue,1000)*1000+' msec...');
+    console.log(currentSkill);
     setTimeout(()=>{
-        callback(undefined,undefined);
-    },Math.min(20-currentSkill.skillValue,1)
+        console.log("Work Complete!");
+        callback("success");
+    },Math.min(20-currentSkill.skillValue,1000)*1000
     )   
 }
 const markComplete = (request,callback)=>{
-    pgsql.query("update sublog set rep=CURRENT_TIMESTAMP where worker='"+WORKERNAME+"' and id = '"+request.id+"' product=('"+request.product+"')")
+    pgsql.query("update sublog set rep=CURRENT_TIMESTAMP where worker='"+WORKERNAME+"' and id = '"+request.id+"' and product='"+request.product+"'")
 }
 
 const loop = () =>{
@@ -76,7 +84,7 @@ const loop = () =>{
             getRequests((requests)=>{
                 if (requests){
                 requests.forEach((request)=>{
-                    console.log(request);
+                    // console.log(request);
                     workRequest(request,()=>{
                         pgsql.inventoryPut(request.product);
                         markComplete(request);

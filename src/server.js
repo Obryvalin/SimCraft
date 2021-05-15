@@ -67,11 +67,22 @@ const newRequest = (source,id,product,callback) =>{
     }
 }
 
+const getResult = (id,callback) =>{
+    let unfinished;
+    pgsql.query("select * from sublog where id='"+id+"' and rep is null",(err,res)=>{
+        if (res){
+            console.log(id+ " - not finished");
+            if(callback) callback({result:"Unfinished"});
+        }
+        if(!res){
+            if(callback) callback({result:"success"});
 
-const canFinishRequest = (source,id) =>{
 
+        }
+    });
 }
 
 module.exports = {
-    newRequest
+    newRequest,
+    getResult
 } 

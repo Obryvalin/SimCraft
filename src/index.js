@@ -21,6 +21,23 @@ webServer.get('/Request',(request,response)=>{
     
 });
 
+webServer.get('/getResult',(request,response)=>{
+    console.log("Request from IP:"+request.ip);
+    console.log(request.query);
+    if (!request.query.id){
+        console.log("No Product!");
+        response.send({result:"Fail",error:"No Product"});
+    }
+    else
+    {
+        server.getResult(request.query.id,(result)=>{
+            
+        response.send(result);
+        })
+    }
+    
+})
+
 webServer.get('*',(request,response)=>{
     response.send('404');
 })
