@@ -27,13 +27,31 @@ const inventoryPut = (product) =>{
     query("insert into inventory(product) values('"+product+"')");
 }
 
-const inventoryTake = (product) =>{
-    query("delete from inventory where product = '"+product+"' limit 1")
+const inventoryCheck = (product) =>{
+    query("select count (product) as cnt where product = "+product,(err,res)=>{
+        if (res.cnt==0) {
+            return false;
+        }
+        else{       
+            return true;
+        }
+        
+    }) 
 }
+
+const inventoryTake = (product) =>{
+         
+    query("delete from inventory where product = '"+product+"' limit 1",()=>{
+        return true;
+    });
+}
+  
+
 
 
 module.exports = {
     query,
+    inventoryCheck,
     inventoryPut,
     inventoryTake
 }

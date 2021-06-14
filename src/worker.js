@@ -28,18 +28,21 @@ const markRequest = (callback)=>{
     })
 }
 const getRequests = (callback)=>{
-    pgsql.query("update sublog set snd = CURRENT_TIMESTAMP where snd is null or EXTRACT(EPOCH FROM current_timestamp-snd) > "+COOLDOWN,()=>{
-        pgsql.query("select * from sublog where worker='"+WORKERNAME+"' and rep is null ",(err,res)=>{
-            if(!res){
-                console.log("No Requests");
+        pgsql.query("select * from sublog where worker='"+WORKERNAME+"' and rep is null and snd is null",(err,res)=>{
+            if(err || !res || !res.rows){
+                console.log("No Requests " && err);
                 if(callback) callback(undefined);
             }
-            
+            pgsql.query("Update sublog set snd = CURRENT_TIMESTAMP where snd is null and worker='"+WORKERNAME+"'",(err,res)=>{
+              
+            })
+            pgsql.query("Update sublog set snd = null where snd is not null and rep is null and worker='"+WORKERNAME+"' and extract(epoch from CURRENT_TIMESTAMP-snd) > "+COOLDOWN,(err,res)=>{
+            })
+
             if(callback) callback(res.rows);
         })
-    });
+    };
     
-}
 const workRequest = (request,callback)=>{
     let skillNeeded;
     let currentSkill = {skillValue:0};
@@ -65,7 +68,7 @@ const workRequest = (request,callback)=>{
         }
     }
     
-    console.log(request);
+  //  console.log(request);
     console.log('WorkRequest: '+Math.min(20-currentSkill.skillValue,1000)*1000+' msec...');
     console.log(currentSkill);
     setTimeout(()=>{
@@ -78,6 +81,31 @@ const markComplete = (request,callback)=>{
     pgsql.query("update sublog set rep=CURRENT_TIMESTAMP where worker='"+WORKERNAME+"' and id = '"+request.id+"' and product='"+request.product+"'")
 }
 
+const takeNeeded = (product,callback) => {
+  recipes.forEach((recipe) => {
+    if (recipe.recipeName == product) {
+      let enough;
+      enough = true;
+      if (recipe.components){
+        recipe.components.forEach((component) => {
+            if (pgsql.inventoryCheck(component) == false) {
+            enough = false;
+            if (callback) callback("Not enough components");
+            }
+        });
+      }
+      if (enough == true){
+        if (recipe.components){
+            recipe.components.forEach((component) => {
+            pgsql.inventoryTake(component);
+            });
+        }
+        if (callback) callback("success");
+      }
+    }
+  });
+};
+
 const loop = () =>{
     setInterval(()=>{
         markRequest(()=>{
@@ -85,10 +113,14 @@ const loop = () =>{
                 if (requests){
                 requests.forEach((request)=>{
                     // console.log(request);
-                    workRequest(request,()=>{
-                        pgsql.inventoryPut(request.product);
-                        markComplete(request);
-                    })
+                    takeNeeded(request.product,(takeResult)=>{
+                        if (takeResult=="success")
+                            workRequest(request,()=>{
+                                pgsql.inventoryPut(request.product);
+                                markComplete(request);
+                            })
+                    });
+                    
                 })
             }
             })
