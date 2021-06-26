@@ -1,11 +1,15 @@
-const pgsql = require("./pgsql");
 const {Pool} = require("pg");
 const fs = require("fs");
+const { v1: uuidv1 } = require("uuid");
+const chalk = require("chalk");
+
+const pgsql = require("./pgsql");
+const log = require("./log");
 
 
 const {recipes} = JSON.parse(fs.readFileSync("conf/recipes.json").toString());
 var grabCount = 2;
-var WORKERNAME = "WORKER1";
+var WORKERNAME = uuidv1();
 var INTERVAL = 3000;
 var COOLDOWN = 20;
 var skills = [];
@@ -18,7 +22,7 @@ const updateWorker = ()=>{
     pgsql.query("update workers set update = CURRENT_TIMESTAMP where worker='"+WORKERNAME+"'")
 }
 const finishWorker = ()=>{
-    console.log ("Finish Worker");
+    log.timestamp ("Finish Worker");
     pgsql.query("delete from workers where worker='"+WORKERNAME+"'")
 }
 // id у всех одинаковые
@@ -30,7 +34,7 @@ const markRequest = (callback)=>{
 const getRequests = (callback)=>{
         pgsql.query("select * from sublog where worker='"+WORKERNAME+"' and rep is null and snd is null",(err,res)=>{
             if(err || !res || !res.rows){
-                console.log("No Requests " && err);
+                log.timestamp("No Requests " && err);
                 if(callback) callback(undefined);
             }
             pgsql.query("Update sublog set snd = CURRENT_TIMESTAMP where snd is null and worker='"+WORKERNAME+"'",(err,res)=>{
@@ -68,11 +72,11 @@ const workRequest = (request,callback)=>{
         }
     }
     
-  //  console.log(request);
-    console.log('WorkRequest: '+Math.min(20-currentSkill.skillValue,1000)*1000+' msec...');
-    console.log(currentSkill);
+  //  log.timestamp(request);
+    log.timestamp('WorkRequest '+request.product+': '+Math.min(20-currentSkill.skillValue,1000)*1000+' msec...');
+    // log.timestamp(currentSkill);
     setTimeout(()=>{
-        console.log("Work Complete!");
+        log.timestamp("Work Complete! "+chalk.green(request.product));
         callback("success");
     },Math.min(20-currentSkill.skillValue,1000)*1000
     )   
@@ -81,27 +85,54 @@ const markComplete = (request,callback)=>{
     pgsql.query("update sublog set rep=CURRENT_TIMESTAMP where worker='"+WORKERNAME+"' and id = '"+request.id+"' and product='"+request.product+"'")
 }
 
-const takeNeeded = (product,callback) => {
+const takeNeeded = (product, callback) => {
   recipes.forEach((recipe) => {
     if (recipe.recipeName == product) {
-      let enough;
-      enough = true;
-      if (recipe.components){
+      let enough,componentsCount,missing;
+      enough = 0;
+      componentsCount = 0;
+      missing = false;
+      
+      if (recipe.components) {
+        componentsCount=recipe.components.length;
         recipe.components.forEach((component) => {
-            if (pgsql.inventoryCheck(component) == false) {
-            enough = false;
-            if (callback) callback("Not enough components");
-            }
+            pgsql.inventoryCheck(component,(checkResult)=>{
+                if (checkResult == false) {
+                    log.timestamp("Not Enough "+chalk.red(component) +" for " + chalk.yellow(product));
+                    missing = true;
+                    if (callback) callback("Not enough components")
+                    
+                  }
+                else {
+                    enough++;
+                }
+            })
+         
         });
       }
-      if (enough == true){
-        if (recipe.components){
-            recipe.components.forEach((component) => {
-            pgsql.inventoryTake(component);
-            });
+      // wait each component?
+     const waitForCheckComponents = setInterval(()=>{
+        if (missing == true)
+        {
+            clearInterval(waitForCheckComponents);
+           // log.timestamp("Take failed for " + product);
+            if (callback) callback("Not enough components");
         }
-        if (callback) callback("success");
-      }
+        if (enough == componentsCount) {
+            
+            clearInterval(waitForCheckComponents);
+            if (recipe.components) {
+              recipe.components.forEach((component) => {
+                pgsql.inventoryTake(component, (takeResult) => {
+                 
+                });
+              });
+            }
+            log.timestamp("Enough for " + chalk.green(product));
+            if (callback) callback("success");
+          }  
+      },1000)
+
     }
   });
 };
@@ -112,8 +143,9 @@ const loop = () =>{
             getRequests((requests)=>{
                 if (requests){
                 requests.forEach((request)=>{
-                    // console.log(request);
+                    // log.timestamp(request);
                     takeNeeded(request.product,(takeResult)=>{
+                        log.timestamp("Took for "+request.product+': '+takeResult)
                         if (takeResult=="success")
                             workRequest(request,()=>{
                                 pgsql.inventoryPut(request.product);
@@ -130,5 +162,7 @@ const loop = () =>{
 }
 
 initWorker();
+log.cls("SIMCRAFT WORKER",WORKERNAME);
+
 loop();
 // process.on('exit',finishWorker());

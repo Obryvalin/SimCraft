@@ -1,5 +1,7 @@
 const {Pool} = require("pg");
 const fs = require("fs");
+const { v1: uuidv1 } = require("uuid");
+
 
 const pgoptions = JSON.parse(fs.readFileSync("conf/pg.json").toString());
 
@@ -24,26 +26,35 @@ const query = (sql,callback)=>{
 };
 
 const inventoryPut = (product) =>{
-    query("insert into inventory(product) values('"+product+"')");
+    console.log('inventory put:\t'+product);
+    query("insert into inventory(id,product) values('"+uuidv1()+"','"+product+"')");
 }
 
-const inventoryCheck = (product) =>{
-    query("select count (product) as cnt where product = "+product,(err,res)=>{
-        if (res.cnt==0) {
-            return false;
+const inventoryCheck = (product,callback) =>{
+    query("select count (product) as cnt from inventory where product = '"+product+"'",(err,res)=>{
+        console.log('Checking inventory for '+product+'\t\t - cnt: '+res.rows[0].cnt);
+        if (res.rows[0].cnt==0) {
+            if (callback) callback(false);
         }
         else{       
-            return true;
+            if (callback) callback(true);
         }
-        
     }) 
 }
 
-const inventoryTake = (product) =>{
-         
-    query("delete from inventory where product = '"+product+"' limit 1",()=>{
-        return true;
-    });
+const inventoryTake = (product,callback) =>{
+    inventoryCheck(product,(checkResult)=>{
+        if(checkResult)
+        {
+            console.log('inventory take:\t'+product);        
+            query("delete from inventory where id in (select id from inventory where product = '"+product+"' order by id limit 1)",()=>{
+                if (callback) callback(true);
+            });   
+        } else{
+            console.log('Take '+product+' failed');
+            if (callback) callback(false);
+            }
+    })
 }
   
 

@@ -1,0 +1,128 @@
+
+[Sat Jun 26 2021 10:29:08 GMT+0300 (Москва, стандартное время)] SIMCRAFT WORKER
+[Sat Jun 26 2021 10:29:08 GMT+0300 (Москва, стандартное время)] WORKERNAME: 31b69870-d650-11eb-aa69-d383de325990
+[Sat Jun 26 2021 10:36:11 GMT+0300 (Москва, стандартное время)] Express fired on port 3000
+[Sat Jun 26 2021 10:36:38 GMT+0300 (Москва, стандартное время)] SIMCRAFT WORKER
+[Sat Jun 26 2021 10:36:38 GMT+0300 (Москва, стандартное время)] WORKERNAME: 3db047b0-d651-11eb-825b-753de3993680
+[Sat Jun 26 2021 10:36:41 GMT+0300 (Москва, стандартное время)] Request from IP:::1
+[Sat Jun 26 2021 10:36:41 GMT+0300 (Москва, стандартное время)] [object Object]
+[Sat Jun 26 2021 10:36:45 GMT+0300 (Москва, стандартное время)] Enough for [32mham[39m
+[Sat Jun 26 2021 10:36:45 GMT+0300 (Москва, стандартное время)] Took for ham: success
+[Sat Jun 26 2021 10:36:45 GMT+0300 (Москва, стандартное время)] WorkRequest ham: 20000 msec...
+[Sat Jun 26 2021 10:36:45 GMT+0300 (Москва, стандартное время)] Enough for [32mbread[39m
+[Sat Jun 26 2021 10:36:45 GMT+0300 (Москва, стандартное время)] Took for bread: success
+[Sat Jun 26 2021 10:36:45 GMT+0300 (Москва, стандартное время)] WorkRequest bread: 20000 msec...
+[Sat Jun 26 2021 10:36:47 GMT+0300 (Москва, стандартное время)] Not Enough ham for hamburger
+[Sat Jun 26 2021 10:36:47 GMT+0300 (Москва, стандартное время)] Took for hamburger: Not enough components
+[Sat Jun 26 2021 10:36:47 GMT+0300 (Москва, стандартное время)] Not Enough bread for hamburger
+[Sat Jun 26 2021 10:36:47 GMT+0300 (Москва, стандартное время)] Took for hamburger: Not enough components
+[Sat Jun 26 2021 10:36:48 GMT+0300 (Москва, стандартное время)] Took for hamburger: Not enough components
+[Sat Jun 26 2021 10:36:50 GMT+0300 (Москва, стандартное время)] Not Enough cocumber for salad
+[Sat Jun 26 2021 10:36:50 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:36:50 GMT+0300 (Москва, стандартное время)] Not Enough tomato for salad
+[Sat Jun 26 2021 10:36:50 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:36:51 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:36:53 GMT+0300 (Москва, стандартное время)] Not Enough hamburger for BigTasty
+[Sat Jun 26 2021 10:36:53 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:36:53 GMT+0300 (Москва, стандартное время)] Not Enough salad for BigTasty
+[Sat Jun 26 2021 10:36:53 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:36:54 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:37:05 GMT+0300 (Москва, стандартное время)] Work Complete!
+[Sat Jun 26 2021 10:37:05 GMT+0300 (Москва, стандартное время)] Work Complete!
+[Sat Jun 26 2021 10:37:12 GMT+0300 (Москва, стандартное время)] Enough for [32mhamburger[39m
+[Sat Jun 26 2021 10:37:12 GMT+0300 (Москва, стандартное время)] Took for hamburger: success
+[Sat Jun 26 2021 10:37:12 GMT+0300 (Москва, стандартное время)] WorkRequest hamburger: 20000 msec...
+[Sat Jun 26 2021 10:37:14 GMT+0300 (Москва, стандартное время)] Not Enough tomato for salad
+[Sat Jun 26 2021 10:37:14 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:37:14 GMT+0300 (Москва, стандартное время)] Not Enough cocumber for salad
+[Sat Jun 26 2021 10:37:14 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:37:15 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:37:17 GMT+0300 (Москва, стандартное время)] Not Enough hamburger for BigTasty
+[Sat Jun 26 2021 10:37:17 GMT+0300 (Москва, стандартное время)] Not Enough salad for BigTasty
+[Sat Jun 26 2021 10:37:17 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:37:17 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:37:18 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:37:32 GMT+0300 (Москва, стандартное время)] Work Complete!
+[Sat Jun 26 2021 10:37:38 GMT+0300 (Москва, стандартное время)] Not Enough cocumber for salad
+[Sat Jun 26 2021 10:37:38 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:37:38 GMT+0300 (Москва, стандартное время)] Not Enough tomato for salad
+[Sat Jun 26 2021 10:37:38 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:37:39 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:37:41 GMT+0300 (Москва, стандартное время)] Not Enough salad for BigTasty
+[Sat Jun 26 2021 10:37:41 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:37:42 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:37:44 GMT+0300 (Москва, стандартное время)] Request inventoryPut cocumber
+[Sat Jun 26 2021 10:38:02 GMT+0300 (Москва, стандартное время)] Not Enough tomato for salad
+[Sat Jun 26 2021 10:38:02 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:38:02 GMT+0300 (Москва, стандартное время)] Request inventoryPut tomato
+[Sat Jun 26 2021 10:38:03 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:38:05 GMT+0300 (Москва, стандартное время)] Not Enough salad for BigTasty
+[Sat Jun 26 2021 10:38:05 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:38:06 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:38:27 GMT+0300 (Москва, стандартное время)] Enough for [32msalad[39m
+[Sat Jun 26 2021 10:38:27 GMT+0300 (Москва, стандартное время)] Took for salad: success
+[Sat Jun 26 2021 10:38:27 GMT+0300 (Москва, стандартное время)] WorkRequest salad: 20000 msec...
+[Sat Jun 26 2021 10:38:29 GMT+0300 (Москва, стандартное время)] Not Enough salad for BigTasty
+[Sat Jun 26 2021 10:38:29 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:38:30 GMT+0300 (Москва, стандартное время)] Took for BigTasty: Not enough components
+[Sat Jun 26 2021 10:38:47 GMT+0300 (Москва, стандартное время)] Work Complete!
+[Sat Jun 26 2021 10:38:54 GMT+0300 (Москва, стандартное время)] Enough for [32mBigTasty[39m
+[Sat Jun 26 2021 10:38:54 GMT+0300 (Москва, стандартное время)] Took for BigTasty: success
+[Sat Jun 26 2021 10:38:54 GMT+0300 (Москва, стандартное время)] WorkRequest BigTasty: 20000 msec...
+[Sat Jun 26 2021 10:39:14 GMT+0300 (Москва, стандартное время)] Work Complete!
+[Sat Jun 26 2021 10:39:21 GMT+0300 (Москва, стандартное время)] Request Show sublog
+[Sat Jun 26 2021 10:39:32 GMT+0300 (Москва, стандартное время)] Request Show inventory
+[Sat Jun 26 2021 10:41:37 GMT+0300 (Москва, стандартное время)] SIMCRAFT WORKER
+[Sat Jun 26 2021 10:41:37 GMT+0300 (Москва, стандартное время)] WORKERNAME: f01bf070-d651-11eb-bf93-2d2112e2e5e5
+[Sat Jun 26 2021 10:43:46 GMT+0300 (Москва, стандартное время)] Request from IP:::1
+[Sat Jun 26 2021 10:43:46 GMT+0300 (Москва, стандартное время)] [object Object]
+[Sat Jun 26 2021 10:43:51 GMT+0300 (Москва, стандартное время)] Not Enough [31mtomato[39m for [33msalad[39m
+[Sat Jun 26 2021 10:43:51 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:43:51 GMT+0300 (Москва, стандартное время)] Not Enough [31mcocumber[39m for [33msalad[39m
+[Sat Jun 26 2021 10:43:51 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:43:52 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:44:15 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:44:15 GMT+0300 (Москва, стандартное время)] Not Enough [31mtomato[39m for [33msalad[39m
+[Sat Jun 26 2021 10:44:15 GMT+0300 (Москва, стандартное время)] Not Enough [31mcocumber[39m for [33msalad[39m
+[Sat Jun 26 2021 10:44:15 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:44:16 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:44:24 GMT+0300 (Москва, стандартное время)] Request inventoryPut tomato
+[Sat Jun 26 2021 10:44:35 GMT+0300 (Москва, стандартное время)] Request inventoryPut cocumber
+[Sat Jun 26 2021 10:44:40 GMT+0300 (Москва, стандартное время)] Enough for [32msalad[39m
+[Sat Jun 26 2021 10:44:40 GMT+0300 (Москва, стандартное время)] Took for salad: success
+[Sat Jun 26 2021 10:44:40 GMT+0300 (Москва, стандартное время)] WorkRequest salad: 20000 msec...
+[Sat Jun 26 2021 10:46:48 GMT+0300 (Москва, стандартное время)] Express fired on port 3000
+[Sat Jun 26 2021 10:46:48 GMT+0300 (Москва, стандартное время)] Request inventoryPut cocumber
+[Sat Jun 26 2021 10:47:47 GMT+0300 (Москва, стандартное время)] Request from IP:::1
+[Sat Jun 26 2021 10:47:47 GMT+0300 (Москва, стандартное время)] [object Object]
+[Sat Jun 26 2021 10:48:16 GMT+0300 (Москва, стандартное время)] Request Show inventory
+[Sat Jun 26 2021 10:48:33 GMT+0300 (Москва, стандартное время)] Not Enough [31mtomato[39m for [33msalad[39m
+[Sat Jun 26 2021 10:48:33 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:48:33 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:48:35 GMT+0300 (Москва, стандартное время)] Not Enough [31mtomato[39m for [33msalad[39m
+[Sat Jun 26 2021 10:48:35 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:48:36 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:48:48 GMT+0300 (Москва, стандартное время)] Request inventoryPut tomato
+[Sat Jun 26 2021 10:48:57 GMT+0300 (Москва, стандартное время)] Enough for [32msalad[39m
+[Sat Jun 26 2021 10:48:57 GMT+0300 (Москва, стандартное время)] WorkRequest salad: 20000 msec...
+[Sat Jun 26 2021 10:48:57 GMT+0300 (Москва, стандартное время)] Took for salad: success
+[Sat Jun 26 2021 10:48:59 GMT+0300 (Москва, стандартное время)] Not Enough [31mtomato[39m for [33msalad[39m
+[Sat Jun 26 2021 10:48:59 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:48:59 GMT+0300 (Москва, стандартное время)] Not Enough [31mcocumber[39m for [33msalad[39m
+[Sat Jun 26 2021 10:48:59 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:49:00 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:49:17 GMT+0300 (Москва, стандартное время)] Work Complete! [32msalad[39m
+[Sat Jun 26 2021 10:49:21 GMT+0300 (Москва, стандартное время)] Request Show inventory
+[Sat Jun 26 2021 10:49:24 GMT+0300 (Москва, стандартное время)] Not Enough [31mcocumber[39m for [33msalad[39m
+[Sat Jun 26 2021 10:49:24 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:49:24 GMT+0300 (Москва, стандартное время)] Not Enough [31mtomato[39m for [33msalad[39m
+[Sat Jun 26 2021 10:49:24 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:49:25 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:49:29 GMT+0300 (Москва, стандартное время)] Request Show reqdata
+[Sat Jun 26 2021 10:49:33 GMT+0300 (Москва, стандартное время)] Request Show log
+[Sat Jun 26 2021 10:49:40 GMT+0300 (Москва, стандартное время)] Request Show sublog
+[Sat Jun 26 2021 10:49:48 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:49:48 GMT+0300 (Москва, стандартное время)] Not Enough [31mtomato[39m for [33msalad[39m
+[Sat Jun 26 2021 10:49:48 GMT+0300 (Москва, стандартное время)] Not Enough [31mcocumber[39m for [33msalad[39m
+[Sat Jun 26 2021 10:49:48 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components
+[Sat Jun 26 2021 10:49:49 GMT+0300 (Москва, стандартное время)] Took for salad: Not enough components

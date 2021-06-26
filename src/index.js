@@ -1,31 +1,36 @@
 const express = require("express");
+const { v1: uuidv1 } = require("uuid");
+
 const server = require( "./server");
+const pgsql = require("./pgsql");
+const log = require("./log");
 
 const PORT = 3000;
 let webServer = express();
 //===================================================
 
 webServer.get('/Request',(request,response)=>{
-    console.log("Request from IP:"+request.ip);
-    console.log(request.query);
+    log.timestamp("Request from IP:"+request.ip);
+    log.timestamp(request.query);
     if (!request.query.product){
-        console.log("No Product!");
+        log.timestamp("No Product!");
         response.send({result:"Fail",error:"No Product"});
     }
     else
     {
-        server.newRequest("Web",request.query.id,request.query.product,()=>{
-            response.send({result:"Registred"}); 
+        let id = uuidv1();
+        server.newRequest("Web",id,request.query.product,()=>{
+            response.send({result:"Registred",id}); 
         })
     }
     
 });
 
 webServer.get('/getResult',(request,response)=>{
-    console.log("Request from IP:"+request.ip);
-    console.log(request.query);
+    log.timestamp("Request from IP:"+request.ip);
+    log.timestamp(request.query);
     if (!request.query.id){
-        console.log("No Product!");
+        log.timestamp("No Product!");
         response.send({result:"Fail",error:"No Product"});
     }
     else
@@ -37,6 +42,63 @@ webServer.get('/getResult',(request,response)=>{
     }
     
 })
+webServer.get('/inventoryTake',(request,response)=>{
+    log.timestamp("Request inventoryTake"+request.query.product);
+    if(!request.query.product){
+        log.timestamp("No Product!");
+        response.send({result:"Fail",error:"No Product"});
+    }
+    else{
+        pgsql.inventoryTake(request.query.product,(takeResult)=>{
+            if (takeResult){
+                response.send({result:"Success"});
+            }
+            else{
+                log.timestamp("No Product in inventory!");
+                response.send({result:"Fail",error:"No Product in inventory"});
+            }
+        })
+        
+    }
+})
+
+webServer.get('/inventoryPut',(request,response)=>{
+    log.timestamp("Request inventoryPut "+request.query.product);
+    if(!request.query.product){
+        log.timestamp("No Product!");
+        response.send({result:"Fail",error:"No Product"});
+    }
+    else{
+        pgsql.inventoryPut(request.query.product);
+        response.send({result:"Success",product:request.query.product});
+    }
+        
+})
+
+
+
+webServer.get('/Show',(request,response)=>{
+    log.timestamp("Request Show "+request.query.entity);
+    if(!request.query.entity){
+        log.timestamp("No Entity!");
+        response.send({result:"Fail",error:"No Entity"});
+    }
+
+    pgsql.query("select * from "+request.query.entity,(err,result)=>{
+        if (err) {
+            log.timestamp(err);
+        }
+        if (result.rows)
+        {
+            // log.timestamp(result.rows);
+            response.send(result.rows);
+        }
+        else {
+            response.send({result:"Empty"});
+        }
+    })
+})
+
 
 webServer.get('*',(request,response)=>{
     response.send('404');
@@ -46,7 +108,7 @@ webServer.get('*',(request,response)=>{
 const launch = (port) => {
     webServer.listen(port, ()=>{
 
-    console.log("Express fired on port "+port);
+    log.timestamp("Express fired on port "+port);
     })
 }
 launch(PORT);
