@@ -2,6 +2,7 @@ const pgsql = require("./pgsql");
 const fs = require("fs");
 const {recipes} = JSON.parse(fs.readFileSync("conf/recipes.json").toString());
 
+const maxWorkerTTL = 300;
 
 const subRequest = (source,id,product,callback) =>{
     
@@ -46,7 +47,7 @@ const deRecipe = (recipe) =>{
     })
 
     console.log ("deRecipe + ",recipe);
-    returnArray.push(recipe);
+    if (hasRecipe) returnArray.push(recipe);
     return returnArray;
 
 }
@@ -82,7 +83,36 @@ const getResult = (id,callback) =>{
     });
 }
 
+const finishRequest = (callback)=>{
+    pgsql.query("UPDATE log set rep = CURRENT_TIMESTAMP where id not in (select id from sublog where rep is null)",(err,res)=>{
+        callback("success");
+    })
+}
+const killOldWorkers = (callback) =>{
+    pgsql.query("DELETE from workers where extract(epoch from CURRENT_TIMESTAMP-update) > "+maxWorkerTTL,(err,res)=>{
+        if (!err){  
+            pgsql.query("UPDATE sublog set worker = '' where worker not in (select worker from workers)",(err,res)=>{
+                callback("success");
+            })
+        }
+    })
+}
+const getLog = (callback) =>{
+    pgsql.query("select * from log where rep is null order by snd limit 10",(err,res)=>{
+        callback(res.rows);
+    });
+}
+const getWorkers = (callback) =>{
+    pgsql.query("select * from workers",(err,res)=>{
+        callback (res.rows);
+    });
+}
+
 module.exports = {
     newRequest,
-    getResult
+    getResult,
+    finishRequest,
+    killOldWorkers,
+    getLog,
+    getWorkers
 } 

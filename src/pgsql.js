@@ -58,11 +58,16 @@ const inventoryTake = (product,callback) =>{
 }
   
 
-
+const closeDoneReqs = (callback)=>{
+    query("UPDATE log set rep = CURRENT_TIMESTAMP where rep is null and id not in (select id from sublog where rep is null)",()=>{
+        if (callback) callback();
+    })
+}
 
 module.exports = {
     query,
     inventoryCheck,
     inventoryPut,
-    inventoryTake
+    inventoryTake,
+    closeDoneReqs
 }

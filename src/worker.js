@@ -137,6 +137,7 @@ const takeNeeded = (product, callback) => {
   });
 };
 
+
 const loop = () =>{
     setInterval(()=>{
         markRequest(()=>{
@@ -157,6 +158,7 @@ const loop = () =>{
             }
             })
         });
+        pgsql.closeDoneReqs();
         updateWorker();
     },INTERVAL);
 }

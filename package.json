@@ -6,7 +6,8 @@
     "start": "node src/index.js",
     "worker": "node src/worker.js",
     "init": "node src/init.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --json",
+    "coverage": "jest --coverage"
   },
   "author": "Obr",
   "license": "ISC",
@@ -17,5 +18,8 @@
     "pg": "^8.6.0",
     "uuid": "^8.3.2"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "jest": "^27.1.1"
+  }
 }

@@ -5,7 +5,7 @@ const server = require( "./server");
 const pgsql = require("./pgsql");
 const log = require("./log");
 
-const PORT = 3000;
+const PORT = process.env.port || 3000;
 let webServer = express();
 //===================================================
 
@@ -87,8 +87,9 @@ webServer.get('/Show',(request,response)=>{
     pgsql.query("select * from "+request.query.entity,(err,result)=>{
         if (err) {
             log.timestamp(err);
+            response.send({result:"Fail",error:"No Entity in Database"});
         }
-        if (result.rows)
+        if (result && result.rows)
         {
             // log.timestamp(result.rows);
             response.send(result.rows);
@@ -101,7 +102,7 @@ webServer.get('/Show',(request,response)=>{
 
 
 webServer.get('*',(request,response)=>{
-    response.send('404');
+    response.sendStatus(200);
 })
 
 //===================================================
@@ -112,3 +113,17 @@ const launch = (port) => {
     })
 }
 launch(PORT);
+setInterval(()=>{
+    log.cls("SIMCRAFT SERVER","SERVER");
+    
+    server.killOldWorkers(()=>{
+        //console.log("Killed");
+    });
+    server.finishRequest(()=>{
+        //console.log("finished");
+    });
+    server.getLog(res=>{
+        console.table(res);
+    });
+    
+},3000);
