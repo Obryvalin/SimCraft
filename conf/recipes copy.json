@@ -1,0 +1,36 @@
+{
+  "recipes": [
+    {
+      "recipeName": "hamburger",
+      "components": ["ham", "bread"],
+      "skill": "packing"
+    },
+    {
+      "recipeName": "ham",
+      "skill": "grill"
+    },
+    {
+      "recipeName": "bread",
+      "skill": "slicing"
+    },
+    {
+      "recipeName":"BigTasty",
+      "components":["hamburger","salad"],
+      "skill":"packing"
+    },
+    {
+      "recipeName":"salad",
+      "components":["tomato","cocumber"],
+      "skill":"slicing"
+    },
+    {
+      "recipeName": "cocumber",
+      "skill": "slicing"
+    },
+    {
+      "recipeName": "tomato",
+      "skill": "slicing"
+    }
+    
+  ]
+}

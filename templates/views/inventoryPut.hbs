@@ -1,0 +1,65 @@
+<html>
+<head>
+     <link rel="stylesheet" href="/css/ObrStyle.css">
+    <script>
+         const inventoryLoad = ()=>{
+            fetch("/Show?entity=inventory").then((res)=>{
+             res.json().then((response)=>{
+                 if (response){
+                        let tableData,rows = '';
+                        
+                        response.forEach((responseItem)=>{
+                            rows += '<tr><td>'+responseItem.id+'</td><td>'+responseItem.product+'</td></tr>';
+                        })  
+                        tableData = '<table><tr><th>ID</th><th>Product</th></tr>'+rows+'</table>';
+                        document.querySelector("#tableData").innerHTML = tableData;
+
+                 } 
+             });
+
+         });
+         }
+     
+         
+         inventoryLoad();
+         setInterval(()=>{
+             inventoryLoad();
+         },3000)
+         
+         
+    </script>
+</head>
+<body>
+        <h3>Simcraft Inventory</h3>
+        <div id="tableData"></div>
+ 
+    
+    <form id="putForm" action="">
+        <p>Положить в инветарь</p>
+        <input type="text" name="item" id="product">
+        <button type="submit">Положить</button>
+    </form>
+    <form id="takeForm" action="">
+        <p>Взять из инвентаря</p>
+        <input type="text" name="item" id="product">
+        <button type="submit">Взять</button>
+    </form>
+    <script>
+        putForm = document.querySelector("#putForm");
+         putForm.addEventListener("submit",(e)=>{
+             e.preventDefault();
+             fetch("/inventoryPut?product="+putForm.item.value).then((res)=>{
+
+             })
+         })
+
+         takeForm = document.querySelector("#takeForm");
+         takeForm.addEventListener("submit",(e)=>{
+             e.preventDefault();
+             fetch("/inventoryTake?product="+takeForm.item.value).then((res)=>{
+
+             })
+         })
+    </script>
+</body>
+</html>

@@ -25,49 +25,11 @@ const query = (sql,callback)=>{
 
 };
 
-const inventoryPut = (product) =>{
-    console.log('inventory put:\t'+product);
-    query("insert into inventory(id,product) values('"+uuidv1()+"','"+product+"')");
-}
 
-const inventoryCheck = (product,callback) =>{
-    query("select count (product) as cnt from inventory where product = '"+product+"'",(err,res)=>{
-        console.log('Checking inventory for '+product+'\t\t - cnt: '+res.rows[0].cnt);
-        if (res.rows[0].cnt==0) {
-            if (callback) callback(false);
-        }
-        else{       
-            if (callback) callback(true);
-        }
-    }) 
-}
 
-const inventoryTake = (product,callback) =>{
-    inventoryCheck(product,(checkResult)=>{
-        if(checkResult)
-        {
-            console.log('inventory take:\t'+product);        
-            query("delete from inventory where id in (select id from inventory where product = '"+product+"' order by id limit 1)",()=>{
-                if (callback) callback(true);
-            });   
-        } else{
-            console.log('Take '+product+' failed');
-            if (callback) callback(false);
-            }
-    })
-}
-  
-
-const closeDoneReqs = (callback)=>{
-    query("UPDATE log set rep = CURRENT_TIMESTAMP where rep is null and id not in (select id from sublog where rep is null)",()=>{
-        if (callback) callback();
-    })
-}
 
 module.exports = {
     query,
-    inventoryCheck,
-    inventoryPut,
-    inventoryTake,
-    closeDoneReqs
+    
+    
 }

@@ -1,27 +1,47 @@
 {
   "recipes": [
     {
-      "recipeName": "hamburger",
-      "components": ["ham", "bread"],
+      "recipeName": "system",
+      "components": ["motherboard", "processor","memory","powerSupply","graphicsCard"],
       "skill": "packing"
     },
     {
-      "recipeName": "ham",
-      "skill": "grill"
+      "recipeName": "motherboard",
+      "skill": "buying"
     },
     {
-      "recipeName": "bread",
-      "skill": "slicing"
+      "recipeName": "processor",
+      "skill": "buying"
     },
     {
-      "recipeName":"BigTasty",
-      "components":["hamburger","salad"],
+      "recipeName": "memory",
+      "skill": "buying"
+    },
+    {
+      "recipeName": "powerSupply",
+      "skill": "buying"
+    },
+    {
+      "recipeName": "graphicsCard",
+      "skill": "buying"
+    },
+    {
+      "recipeName":"PC",
+      "components":["system","perethials","case"],
       "skill":"packing"
     },
     {
-      "recipeName":"salad",
-      "components":["tomato","cocumber"],
-      "skill":"slicing"
+      "recipeName":"perethials",
+      "components":["SSD","SSD"],
+      "skill":"packing"
+    },
+    {
+      "recipeName": "SSD",
+      "skill": "buying"
+    },
+    {
+      "recipeName": "case",
+      "skill": "buying"
     }
     
   ]

@@ -1,14 +1,21 @@
 const express = require("express");
 const { v1: uuidv1 } = require("uuid");
-
+const hbs = require("hbs");
+const path = require("path");
 const server = require( "./server");
 const pgsql = require("./pgsql");
 const log = require("./log");
 
+
 const PORT = process.env.port || 3000;
 let webServer = express();
 //===================================================
+webServer.set("view engine", "hbs"); // без этого hbs на express не работает
+webServer.set("views", path.join(__dirname, "../templates/views")); // где hbs лежат
+hbs.registerPartials(path.join(__dirname, "../templates/partials"));
 
+webServer.use(express.static(path.join(__dirname, "../public")));
+//===================================================
 webServer.get('/Request',(request,response)=>{
     log.timestamp("Request from IP:"+request.ip);
     log.timestamp(request.query);
@@ -49,7 +56,7 @@ webServer.get('/inventoryTake',(request,response)=>{
         response.send({result:"Fail",error:"No Product"});
     }
     else{
-        pgsql.inventoryTake(request.query.product,(takeResult)=>{
+        server.inventoryTake(request.query.product,(takeResult)=>{
             if (takeResult){
                 response.send({result:"Success"});
             }
@@ -69,13 +76,17 @@ webServer.get('/inventoryPut',(request,response)=>{
         response.send({result:"Fail",error:"No Product"});
     }
     else{
-        pgsql.inventoryPut(request.query.product);
+        server.inventoryPut(request.query.product);
         response.send({result:"Success",product:request.query.product});
     }
         
 })
 
+webServer.get('/Inventory',(request,response)=>{
+    response.render('inventoryPut');
+}
 
+)
 
 webServer.get('/Show',(request,response)=>{
     log.timestamp("Request Show "+request.query.entity);
@@ -100,6 +111,11 @@ webServer.get('/Show',(request,response)=>{
     })
 })
 
+webServer.get('/Recipes',(request,response)=>{
+    log.timestamp("Request Recipes");
+    response.send(server.getRecipes());
+})
+
 
 webServer.get('*',(request,response)=>{
     response.sendStatus(200);
@@ -115,15 +131,15 @@ const launch = (port) => {
 launch(PORT);
 setInterval(()=>{
     log.cls("SIMCRAFT SERVER","SERVER");
-    
+    server.getLog(res=>{
+        console.table(res);
+    });
     server.killOldWorkers(()=>{
         //console.log("Killed");
     });
     server.finishRequest(()=>{
         //console.log("finished");
     });
-    server.getLog(res=>{
-        console.table(res);
-    });
+    
     
 },3000);

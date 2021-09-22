@@ -1,10 +1,11 @@
 const {Pool} = require("pg");
 const fs = require("fs");
-const { v1: uuidv1 } = require("uuid");
 const chalk = require("chalk");
+const { v1: uuidv1 } = require("uuid");
 
 const pgsql = require("./pgsql");
 const log = require("./log");
+const server = require("./server");
 
 
 const {recipes} = JSON.parse(fs.readFileSync("conf/recipes.json").toString());
@@ -12,6 +13,7 @@ var grabCount = 2;
 var WORKERNAME = uuidv1();
 var INTERVAL = 3000;
 var COOLDOWN = 20;
+var defaultSkill = 5;
 var skills = [];
 
 const initWorker = ()=>{
@@ -27,20 +29,20 @@ const finishWorker = ()=>{
 }
 // id у всех одинаковые
 const markRequest = (callback)=>{
-    pgsql.query("UPDATE sublog set worker = '"+WORKERNAME+"' where product in (SELECT product from sublog where (worker is null or worker = '"+WORKERNAME+"') and rep is null order by id limit "+grabCount+" )",()=>{
+    pgsql.query("UPDATE orders set worker = '"+WORKERNAME+"' where product in (SELECT product from orders where (worker is null or worker = '"+WORKERNAME+"') and rep is null order by id limit "+grabCount+" )",()=>{
         if(callback) callback();
     })
 }
 const getRequests = (callback)=>{
-        pgsql.query("select * from sublog where worker='"+WORKERNAME+"' and rep is null and snd is null",(err,res)=>{
+        pgsql.query("select * from orders where worker='"+WORKERNAME+"' and rep is null and snd is null",(err,res)=>{
             if(err || !res || !res.rows){
                 log.timestamp("No Requests " && err);
                 if(callback) callback(undefined);
             }
-            pgsql.query("Update sublog set snd = CURRENT_TIMESTAMP where snd is null and worker='"+WORKERNAME+"'",(err,res)=>{
+            pgsql.query("Update orders set snd = CURRENT_TIMESTAMP where snd is null and worker='"+WORKERNAME+"'",(err,res)=>{
               
             })
-            pgsql.query("Update sublog set snd = null where snd is not null and rep is null and worker='"+WORKERNAME+"' and extract(epoch from CURRENT_TIMESTAMP-snd) > "+COOLDOWN,(err,res)=>{
+            pgsql.query("Update orders set snd = null where snd is not null and rep is null and worker='"+WORKERNAME+"' and extract(epoch from CURRENT_TIMESTAMP-snd) > "+COOLDOWN,(err,res)=>{
             })
 
             if(callback) callback(res.rows);
@@ -78,11 +80,11 @@ const workRequest = (request,callback)=>{
     setTimeout(()=>{
         log.timestamp("Work Complete! "+chalk.green(request.product));
         callback("success");
-    },Math.min(20-currentSkill.skillValue,1000)*1000
+    },Math.min(defaultSkill-currentSkill.skillValue,1000)*1000
     )   
 }
 const markComplete = (request,callback)=>{
-    pgsql.query("update sublog set rep=CURRENT_TIMESTAMP where worker='"+WORKERNAME+"' and id = '"+request.id+"' and product='"+request.product+"'")
+    pgsql.query("update orders set rep=CURRENT_TIMESTAMP where worker='"+WORKERNAME+"' and id = '"+request.id+"' and product='"+request.product+"'")
 }
 
 const takeNeeded = (product, callback) => {
@@ -96,7 +98,7 @@ const takeNeeded = (product, callback) => {
       if (recipe.components) {
         componentsCount=recipe.components.length;
         recipe.components.forEach((component) => {
-            pgsql.inventoryCheck(component,(checkResult)=>{
+            server.inventoryCheck(component,(checkResult)=>{
                 if (checkResult == false) {
                     log.timestamp("Not Enough "+chalk.red(component) +" for " + chalk.yellow(product));
                     missing = true;
@@ -123,13 +125,13 @@ const takeNeeded = (product, callback) => {
             clearInterval(waitForCheckComponents);
             if (recipe.components) {
               recipe.components.forEach((component) => {
-                pgsql.inventoryTake(component, (takeResult) => {
-                 
+                server.inventoryTake(component, (takeResult) => {
+                  if (!takeResult) missing = true;
                 });
               });
             }
             log.timestamp("Enough for " + chalk.green(product));
-            if (callback) callback("success");
+            if (callback && !missing) callback("success");
           }  
       },1000)
 
@@ -149,7 +151,7 @@ const loop = () =>{
                         log.timestamp("Took for "+request.product+': '+takeResult)
                         if (takeResult=="success")
                             workRequest(request,()=>{
-                                pgsql.inventoryPut(request.product);
+                                server.inventoryPut(request.product);
                                 markComplete(request);
                             })
                     });
@@ -158,7 +160,7 @@ const loop = () =>{
             }
             })
         });
-        pgsql.closeDoneReqs();
+        
         updateWorker();
     },INTERVAL);
 }

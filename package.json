@@ -6,7 +6,7 @@
     "start": "node src/index.js",
     "worker": "node src/worker.js",
     "init": "node src/init.js",
-    "test": "jest --json",
+    "test": "jest --json --outputFile=jestResult.json",
     "coverage": "jest --coverage"
   },
   "author": "Obr",
@@ -15,6 +15,7 @@
     "chalk": "^4.1.1",
     "date-format": "^3.0.0",
     "express": "^4.17.1",
+    "hbs": "^4.1.2",
     "pg": "^8.6.0",
     "uuid": "^8.3.2"
   },

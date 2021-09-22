@@ -30,9 +30,9 @@ pgsql.query("DROP TABLE workers",(err,res)=>{
 
 })
 
-    pgsql.query("DROP TABLE sublog",(err,res)=>{
-            pgsql.query("CREATE TABLE sublog (source character varying(10),id character varying(36),product character varying(20),worker character varying(36),snd timestamp without time zone,rep timestamp without time zone,result character varying(5))");
-            console.log("sublog done!");
+    pgsql.query("DROP TABLE orders",(err,res)=>{
+            pgsql.query("CREATE TABLE orders (source character varying(10),id character varying(36),product character varying(20),worker character varying(36),snd timestamp without time zone,rep timestamp without time zone,result character varying(5))");
+            console.log("orders done!");
         
     })
 }
