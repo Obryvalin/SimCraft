@@ -1,4 +1,4 @@
-<h3>SimCraft Service<h3>
+<h3>SimCraft Service</h3>
 
 <p>Описание:</p>
 
