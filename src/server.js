@@ -23,36 +23,44 @@ const subRequest = (source,id,product,callback) =>{
      if (hasRecipe == false){
         if (callback) callback('No suitable recipe',undefined);
      }
-     let components = [];
-     components =  deRecipe(recipe);
-     console.log(components);
-     components.forEach((component)=>{
-         pgsql.query("insert into orders(source,id,product) values('"+source+"','"+id+"','"+component+"')");
-     })
+         
+   
+    
     
     
 };
 
-const deRecipe = (recipe) =>{
-    let returnArray = [];
+const placeOrder = (product) =>{
     
-    let hasRecipe = false;
-    recipes.forEach((recipeItem)=>{
-        if (recipeItem.recipeName == recipe){
-        hasRecipe = true;
-        if (recipeItem.components){
-            recipeItem.components.forEach((component)=>{
-                returnArray = returnArray.concat(deRecipe(component));
-            })
+    pgsql.query("select count(product) as cnt from orders where product='"+product+"' and rep is null",(err,res)=>{
+        if (res.rows[0].cnt==0){
+            console.log("Place Order: "+product);
+            pgsql.query("insert into orders(orderid,product) values('"+uuidv1()+"','"+product+"')");
         }
-    }
     })
-
-    console.log ("deRecipe + ",recipe);
-    if (hasRecipe) returnArray.push(recipe);
-    return returnArray;
-
+    
 }
+
+// const deRecipe = (recipe) =>{
+//     let returnArray = [];
+    
+//     let hasRecipe = false;
+//     recipes.forEach((recipeItem)=>{
+//         if (recipeItem.recipeName == recipe){
+//         hasRecipe = true;
+//         if (recipeItem.components){
+//             recipeItem.components.forEach((component)=>{
+//                 returnArray = returnArray.concat(deRecipe(component));
+//             })
+//         }
+//     }
+//     })
+
+//     console.log ("deRecipe + ",recipe);
+//     if (hasRecipe) returnArray.push(recipe);
+//     return returnArray;
+
+// }
 
 
 const newRequest = (source,id,product,callback) =>{
@@ -96,6 +104,9 @@ const finishRequest = (callback)=>{
                             console.log(row.id+ " for "+row.product+" is done!")
                         })
                     }
+                    else{
+                        placeOrder(row.product);
+                    }
                 })
             })
         }
@@ -128,12 +139,13 @@ const inventoryTake = (product,callback) =>{
             console.log('inventory take:\t'+product);       
             pgsql.query("select id from inventory where product = '"+product+"' order by id limit 1",(err,resids)=>{
                     
-            
-                    pgsql.query("delete from inventory where id= '"+resids.rows[0].id+"')",(err,res)=>{
-                    
-                        if (res.rowCount==0) callback(false);
-                        if (res.rowCount>0) callback(true);
-                })
+                if(resids.rows){
+                    pgsql.query("delete from inventory where id='"+resids.rows[0].id+"'",(err,res)=>{
+                        
+                        if (!res||res.rowCount==0) callback(false);
+                        if (res && res.rowCount>0) callback(true);
+                    })
+                }
             });   
         } else{
             console.log('Take '+product+' failed');
@@ -169,6 +181,7 @@ module.exports = {
     newRequest,
     getResult,
     finishRequest,
+    placeOrder,
     inventoryCheck,
     inventoryPut,
     inventoryTake,

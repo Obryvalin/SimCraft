@@ -12,7 +12,25 @@
                             rows += '<tr><td>'+responseItem.id+'</td><td>'+responseItem.product+'</td></tr>';
                         })  
                         tableData = '<table><tr><th>ID</th><th>Product</th></tr>'+rows+'</table>';
-                        document.querySelector("#tableData").innerHTML = tableData;
+                        document.querySelector("#invData").innerHTML = tableData;
+
+                 } 
+             });
+
+         });
+         }
+
+         const ordersLoad = ()=>{
+            fetch("/Show?entity=orders").then((res)=>{
+             res.json().then((response)=>{
+                 if (response){
+                        let tableData,rows = '';
+                        
+                        response.forEach((responseItem)=>{
+                            rows += '<tr><td>'+responseItem.orderid+'</td><td>'+responseItem.product+'</td><td>'+responseItem.worker+'</td><td>'+responseItem.snd+'</td><td>'+responseItem.rep+'</td></tr>';
+                        })  
+                        tableData = '<table><tr><th>orderId</th><th>Product</th><th>worker</th><th>snd</th><th>rep</th></tr>'+rows+'</table>';
+                        document.querySelector("#orderData").innerHTML = tableData;
 
                  } 
              });
@@ -24,14 +42,18 @@
          inventoryLoad();
          setInterval(()=>{
              inventoryLoad();
+             ordersLoad();
          },3000)
          
          
     </script>
 </head>
 <body>
-        <h3>Simcraft Inventory</h3>
-        <div id="tableData"></div>
+        <h3>Simcraft</h3>
+        <p>Orders:</p>
+        <div id="orderData"></div>
+        <p>Inventory</p>
+        <div id="invData"></div>
  
     
     <form id="putForm" action="">

@@ -9,7 +9,7 @@ const server = require("./server");
 
 
 const {recipes} = JSON.parse(fs.readFileSync("conf/recipes.json").toString());
-var grabCount = 2;
+var grabCount = 10;
 var WORKERNAME = uuidv1();
 var INTERVAL = 3000;
 var COOLDOWN = 20;
@@ -28,11 +28,15 @@ const finishWorker = ()=>{
     pgsql.query("delete from workers where worker='"+WORKERNAME+"'")
 }
 // id у всех одинаковые
-const markRequest = (callback)=>{
-    pgsql.query("UPDATE orders set worker = '"+WORKERNAME+"' where product in (SELECT product from orders where (worker is null or worker = '"+WORKERNAME+"') and rep is null order by id limit "+grabCount+" )",()=>{
+const markOrder = (callback)=>{
+    pgsql.query("UPDATE orders set worker = '"+WORKERNAME+"' where orderid in (SELECT orderid from orders where (worker is null or worker = '"+WORKERNAME+"') and rep is null order by snd limit "+grabCount+" )",()=>{
         if(callback) callback();
     })
 }
+const unmarkOrder = (orderid,callback)=>{
+    pgsql.query("UPDATE orders set worker = null,snd = null where orderid='"+orderid+"'");
+}
+
 const getRequests = (callback)=>{
         pgsql.query("select * from orders where worker='"+WORKERNAME+"' and rep is null and snd is null",(err,res)=>{
             if(err || !res || !res.rows){
@@ -51,11 +55,13 @@ const getRequests = (callback)=>{
     
 const workRequest = (request,callback)=>{
     let skillNeeded;
+    let components;
     let currentSkill = {skillValue:0};
     if(!request) {callback("No Request",undefined)}
     recipes.forEach((recipe)=>{
         if (recipe.recipeName == request.product){
             skillNeeded = recipe.skill;
+            components = recipe.components;
         }
     })
     if (skillNeeded){
@@ -75,7 +81,7 @@ const workRequest = (request,callback)=>{
     }
     
   //  log.timestamp(request);
-    log.timestamp('WorkRequest '+request.product+': '+Math.min(20-currentSkill.skillValue,1000)*1000+' msec...');
+    log.timestamp('WorkRequest '+request.product+': '+Math.min(defaultSkill-currentSkill.skillValue,1000)*1000+' msec...');
     // log.timestamp(currentSkill);
     setTimeout(()=>{
         log.timestamp("Work Complete! "+chalk.green(request.product));
@@ -83,8 +89,8 @@ const workRequest = (request,callback)=>{
     },Math.min(defaultSkill-currentSkill.skillValue,1000)*1000
     )   
 }
-const markComplete = (request,callback)=>{
-    pgsql.query("update orders set rep=CURRENT_TIMESTAMP where worker='"+WORKERNAME+"' and id = '"+request.id+"' and product='"+request.product+"'")
+const markComplete = (order,callback)=>{
+    pgsql.query("update orders set rep=CURRENT_TIMESTAMP where worker='"+WORKERNAME+"' and orderid = '"+order.orderid+"'");
 }
 
 const takeNeeded = (product, callback) => {
@@ -101,8 +107,9 @@ const takeNeeded = (product, callback) => {
             server.inventoryCheck(component,(checkResult)=>{
                 if (checkResult == false) {
                     log.timestamp("Not Enough "+chalk.red(component) +" for " + chalk.yellow(product));
+                    server.placeOrder(component);
                     missing = true;
-                    if (callback) callback("Not enough components")
+                    if (callback) callback("Not enough components");
                     
                   }
                 else {
@@ -142,18 +149,22 @@ const takeNeeded = (product, callback) => {
 
 const loop = () =>{
     setInterval(()=>{
-        markRequest(()=>{
+        markOrder(()=>{
             getRequests((requests)=>{
                 if (requests){
-                requests.forEach((request)=>{
+                requests.forEach((order)=>{
                     // log.timestamp(request);
-                    takeNeeded(request.product,(takeResult)=>{
-                        log.timestamp("Took for "+request.product+': '+takeResult)
-                        if (takeResult=="success")
-                            workRequest(request,()=>{
-                                server.inventoryPut(request.product);
-                                markComplete(request);
-                            })
+                    takeNeeded(order.product,(takeResult)=>{
+                        if (takeResult=="success"){
+                            log.timestamp("Took for "+order.product+': '+takeResult);
+                            workRequest(order,()=>{
+                                server.inventoryPut(order.product);
+                                markComplete(order);
+                            })}
+                        else{
+                            unmarkOrder(order.orderid);
+                            ;
+                        }
                     });
                     
                 })

@@ -6,7 +6,6 @@ const server = require( "./server");
 const pgsql = require("./pgsql");
 const log = require("./log");
 
-
 const PORT = process.env.port || 3000;
 let webServer = express();
 //===================================================
@@ -88,26 +87,29 @@ webServer.get('/Inventory',(request,response)=>{
 
 )
 
-webServer.get('/Show',(request,response)=>{
+webServer.get('/db/:table',(request,response)=>{
     log.timestamp("Request Show "+request.query.entity);
-    if(!request.query.entity){
+    if(!request.params.table){
         log.timestamp("No Entity!");
         response.send({result:"Fail",error:"No Entity"});
     }
 
-    pgsql.query("select * from "+request.query.entity,(err,result)=>{
+    pgsql.query("select * from "+request.params.table,(err,result)=>{
         if (err) {
             log.timestamp(err);
             response.send({result:"Fail",error:"No Entity in Database"});
         }
-        if (result && result.rows)
-        {
-            // log.timestamp(result.rows);
-            response.send(result.rows);
+        else{
+            if (result && result.rows)
+            {
+                // log.timestamp(result.rows);
+                response.send(result.rows);
+            }
+            else {
+                response.send({result:"Empty"});
+            }
         }
-        else {
-            response.send({result:"Empty"});
-        }
+       
     })
 })
 
@@ -128,6 +130,7 @@ const launch = (port) => {
     log.timestamp("Express fired on port "+port);
     })
 }
+
 launch(PORT);
 setInterval(()=>{
     log.cls("SIMCRAFT SERVER","SERVER");
@@ -136,7 +139,8 @@ setInterval(()=>{
     });
     server.killOldWorkers(()=>{
         //console.log("Killed");
-    });
+    });//===================================================
+
     server.finishRequest(()=>{
         //console.log("finished");
     });
